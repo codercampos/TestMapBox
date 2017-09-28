@@ -20,9 +20,9 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         mapView = MGLMapView(frame: view.bounds, styleURL: lightStyleURL)
         mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         mapView.tintColor = .darkGray
-        
+    
         // Set the map’s center coordinate and zoom level.
-        mapView.setCenter(CLLocationCoordinate2D(latitude: 38.897, longitude: -77.039), zoomLevel: 10.5, animated: false)
+        mapView.setCenter(CLLocationCoordinate2D(latitude: 13.6914782, longitude: -89.2146939), zoomLevel: 7, animated: false)
         
         mapView.delegate = self
         view.addSubview(mapView)    }
@@ -53,26 +53,26 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         
         // "mapbox://examples.2uf7qges" is the map ID referencing a tileset
         // created from the GeoJSON data uploaded earlier.
-        let source = MGLVectorSource(identifier: "trees", configurationURL: URL(string: "mapbox://examples.2uf7qges")!)
+        let source = MGLVectorSource(identifier: "trees", configurationURL: URL(string: "mapbox://codercampos.cj83r6ar100v42rrwjqvsq8eg-684g5")!)
         
-        let layer = MGLCircleStyleLayer(identifier: "tree-style", source: source)
+        let layer = MGLCircleStyleLayer(identifier: "Light-copy", source: source)
         
         // The source name from the source's TileJSON metadata: mapbox.com/api-documentation/#retrieve-tilejson-metadata
-        layer.sourceLayerIdentifier = "yoshino-trees-a0puw5"
+        layer.sourceLayerIdentifier = "ExampleCarlos"
         
         
         let stops = [
-            0: MGLStyleValue(rawValue: UIColor(red:1.00, green:0.72, blue:0.85, alpha:1.0)),
+            1: MGLStyleValue(rawValue: UIColor(red:1.00, green:0.72, blue:0.85, alpha:1.0)),
             2: MGLStyleValue(rawValue: UIColor(red:0.69, green:0.48, blue:0.73, alpha:1.0)),
-            4: MGLStyleValue(rawValue: UIColor(red:0.61, green:0.31, blue:0.47, alpha:1.0)),
-            7: MGLStyleValue(rawValue: UIColor(red:0.43, green:0.20, blue:0.38, alpha:1.0)),
-            16: MGLStyleValue(rawValue: UIColor(red:0.33, green:0.17, blue:0.25, alpha:1.0))
+            3: MGLStyleValue(rawValue: UIColor(red:0.61, green:0.31, blue:0.47, alpha:1.0)),
+            4: MGLStyleValue(rawValue: UIColor(red:0.43, green:0.20, blue:0.38, alpha:1.0)),
+            5: MGLStyleValue(rawValue: UIColor(red:0.33, green:0.17, blue:0.25, alpha:1.0))
         ]
         
         // Style the circle layer color based on the above categorical stops
         layer.circleColor = MGLStyleValue<UIColor>(interpolationMode: .interval,
                                                    sourceStops: stops,
-                                                   attributeName: "AGE",
+                                                   attributeName: "Rank",
                                                    options: nil)
         
         layer.circleRadius = MGLStyleValue(rawValue: 3)
