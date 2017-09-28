@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Mapbox
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        MGLAccountManager.setAccessToken("pk.eyJ1IjoiY29kZXJjYW1wb3MiLCJhIjoiY2o4M3AyYmZoMDBkaTMycGRsc2NocTk3NyJ9.GXkZmLfc3lPkghAOWwmgtw")
         return true
     }
 
