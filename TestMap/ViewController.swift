@@ -22,6 +22,7 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         mapView.tintColor = .darkGray
     
         // Set the map’s center coordinate and zoom level.
+        // I suggest a value around the source you are going to show - Carlos Campos
         mapView.setCenter(CLLocationCoordinate2D(latitude: 13.6914782, longitude: -89.2146939), zoomLevel: 7, animated: false)
         
         mapView.delegate = self
@@ -35,32 +36,27 @@ class ViewController: UIViewController, MGLMapViewDelegate {
     // Wait until the style is loaded before modifying the map style.
     func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle) {
         
-        
-        Alamofire.request("https://httpbin.org/get").responseJSON { response in
-            print("Request: \(String(describing: response.request))")   // original url request
-            print("Response: \(String(describing: response.response))") // http url response
-            print("Result: \(response.result)")                         // response serialization result
-            
-            if let json = response.result.value {
-                print("JSON: \(json)") // serialized json response
-            }
-            
-            if let data = response.data, let utf8Text = String(data: data, encoding: .utf8) {
-                print("Data: \(utf8Text)") // original server data as UTF8 string
-            }
-        }
-        
-        
-        // "mapbox://examples.2uf7qges" is the map ID referencing a tileset
+        // "mapbox://codercampos.cj83r6ar100v42rrwjqvsq8eg-684g5" is the map ID referencing a tileset.
         // created from the GeoJSON data uploaded earlier.
+        // Notes  - Carlos Campos
+        //If you want to use your own tileset, you must retreve you mapid on the tileset sections. Example: mapbox://{your-mapid-here}
+        //The identifier is a unique id you want to name your source. Name it like "ranks" or something
         let source = MGLVectorSource(identifier: "trees", configurationURL: URL(string: "mapbox://codercampos.cj83r6ar100v42rrwjqvsq8eg-684g5")!)
         
+        // Notes  - Carlos Campos
+        //This is the style attached to a source (mapid), this is created on MapBox Studio.
+        //On the Tileset, you can create a style from that tileset and save it. The name of the style will be the identifer here
         let layer = MGLCircleStyleLayer(identifier: "Light-copy", source: source)
         
+        
         // The source name from the source's TileJSON metadata: mapbox.com/api-documentation/#retrieve-tilejson-metadata
+        // Notes  - Carlos Campos
+        // Basically, the name of the DataSet
         layer.sourceLayerIdentifier = "ExampleCarlos"
         
-        
+        // Notes  - Carlos Campos
+        //This is a dictionary the library will take to draw the colors you want depending on a property attached to your source.
+        //In my case, I added points with a property name Rank which are values from 1 to 5. I have assigned a color per value
         let stops = [
             1: MGLStyleValue(rawValue: UIColor(red:1.00, green:0.72, blue:0.85, alpha:1.0)),
             2: MGLStyleValue(rawValue: UIColor(red:0.69, green:0.48, blue:0.73, alpha:1.0)),
@@ -69,12 +65,15 @@ class ViewController: UIViewController, MGLMapViewDelegate {
             5: MGLStyleValue(rawValue: UIColor(red:0.33, green:0.17, blue:0.25, alpha:1.0))
         ]
         
+        // Notes  - Carlos Campos
         // Style the circle layer color based on the above categorical stops
+        //The attribute name will be the key value to compare with the "stops" source
         layer.circleColor = MGLStyleValue<UIColor>(interpolationMode: .interval,
                                                    sourceStops: stops,
                                                    attributeName: "Rank",
                                                    options: nil)
         
+        //I think if you want the circle bigger, add more value here
         layer.circleRadius = MGLStyleValue(rawValue: 3)
         
         style.addLayer(layer)
