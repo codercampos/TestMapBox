@@ -12,6 +12,7 @@ import Alamofire
 
 class ViewController: UIViewController, MGLMapViewDelegate {
     var mapView: MGLMapView!
+    var popup: UILabel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +49,6 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         //On the Tileset, you can create a style from that tileset and save it. The name of the style will be the identifer here
         let layer = MGLCircleStyleLayer(identifier: "Light-copy", source: source)
         
-        
         // The source name from the source's TileJSON metadata: mapbox.com/api-documentation/#retrieve-tilejson-metadata
         // Notes  - Carlos Campos
         // Basically, the name of the DataSet
@@ -77,7 +77,76 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         
         style.addLayer(layer)
         
+        let numbersLayer = MGLSymbolStyleLayer(identifier: "clustered", source: source)
+        numbersLayer.sourceLayerIdentifier = "CAL1-0"
+        numbersLayer.textFontSize = MGLStyleValue(rawValue: 10)
+        numbersLayer.textTranslation = MGLStyleValue(rawValue: NSValue(cgVector: CGVector(dx: 0, dy: 20)))
+        numbersLayer.iconAllowsOverlap = MGLStyleValue(rawValue: false)
+        let textSelector = [
+            0: MGLStyleValue(rawValue: UIColor.clear),
+            17: MGLStyleValue(rawValue: UIColor.black)
+        ]
+        numbersLayer.textColor = MGLStyleValue<UIColor>(interpolationMode: .interval, cameraStops: textSelector, options: nil)
+        numbersLayer.text = MGLStyleValue(rawValue: "Lux2 = {Lux2 (459)}")
+        style.addLayer(numbersLayer)
+        
+        
         style.addSource(source)
+        
+        //We are not using this for the moment
+        //view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap(_:))))
+        
+    }
+    
+    func mapViewRegionIsChanging(_ mapView: MGLMapView) {
+        showPopup(false, animated: false)
+    }
+    
+    @objc func handleTap(_ tap: UITapGestureRecognizer) {
+        let point = tap.location(in: tap.view)
+        let width = CGFloat(30.0)
+        let rect = CGRect(x: point.x - width / 2, y: point.y - width / 2, width: width, height: width)
+        let ports = mapView.visibleFeatures(in: rect, styleLayerIdentifiers: ["Light-copy"])
+        if ports.count > 0 {
+            let port = ports.first!
+            
+            if popup == nil {
+                popup = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 60))
+                popup!.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+                popup!.layer.cornerRadius = 4
+                popup!.layer.masksToBounds = true
+                popup!.textAlignment = .center
+                popup!.lineBreakMode = .byTruncatingTail
+                popup!.font = UIFont.systemFont(ofSize: 12)
+                popup!.textColor = UIColor.black
+                popup!.alpha = 0
+                view.addSubview(popup!)
+            }
+            
+            let number = port.attribute(forKey: "Comments")!
+            popup!.text = "\(number)\nLux"
+            let size = (popup!.text! as NSString).size(withAttributes: [NSAttributedStringKey.font: popup!.font])
+            popup!.bounds = CGRect(x: 0, y: 0, width: size.width, height: size.height).insetBy(dx: -10, dy: -10)
+            let point = mapView.convert(port.coordinate, toPointTo: mapView)
+            popup!.center = CGPoint(x: point.x, y: point.y - 50)
+            
+            if popup!.alpha < 1 {
+                showPopup(true, animated: true)
+            }
+        } else {
+            showPopup(false, animated: true)
+        }
+    }
+    
+    func showPopup(_ shouldShow: Bool, animated: Bool) {
+        let alpha: CGFloat = (shouldShow ? 1 : 0)
+        if animated {
+            UIView.animate(withDuration: 0.25) { [unowned self] in
+                self.popup?.alpha = alpha
+            }
+        } else {
+            popup?.alpha = alpha
+        }
     }
 
 }
