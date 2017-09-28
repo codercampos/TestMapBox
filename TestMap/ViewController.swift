@@ -82,11 +82,14 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         numbersLayer.textFontSize = MGLStyleValue(rawValue: 10)
         numbersLayer.textTranslation = MGLStyleValue(rawValue: NSValue(cgVector: CGVector(dx: 0, dy: 20)))
         numbersLayer.iconAllowsOverlap = MGLStyleValue(rawValue: false)
+        numbersLayer.textAllowsOverlap = MGLStyleValue(rawValue: true)
+        //if you want to show only when a zoom is right. If note remove textSelector and uncomment the other numbersLayer.textColor
         let textSelector = [
             0: MGLStyleValue(rawValue: UIColor.clear),
             17: MGLStyleValue(rawValue: UIColor.black)
         ]
         numbersLayer.textColor = MGLStyleValue<UIColor>(interpolationMode: .interval, cameraStops: textSelector, options: nil)
+        //numbersLayer.textColor = MGLStyleValue(rawValue: UIColor.black)
         numbersLayer.text = MGLStyleValue(rawValue: "Lux2 = {Lux2 (459)}")
         style.addLayer(numbersLayer)
         
